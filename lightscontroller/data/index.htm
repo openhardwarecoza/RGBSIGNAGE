@@ -1,0 +1,164 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="tinycolorpicker.css" type="text/css" media="screen" />
+
+</head>
+
+<body>
+	<div class="widget">
+		<ol class="widget-list" id="Settings">
+			<li>
+				<form action="/">
+					<table class="widget-table">
+						<tr>
+							<td>
+								<div class="widget-list-link">
+									Wifi
+									<span class="widget-list-status">
+										SSID:<br>
+										<input type="text" id="ssid" name="ssid" value="%_ssid_%"><br>
+				   					Password:<br>
+				   					<input type="text" id="psk" name="psk" value="%_psk_%"><br>
+									</span>
+								</div>
+							</td>
+							<td>
+								<div class="widget-list-ssid">
+									Available Networks
+									<span class="widget-list-status">
+										%_availssids_%
+									</span>
+								</div>
+							</td>
+						</tr>
+					</table>
+
+
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<span class="widget-list-status">
+							<input type="submit" value="Save">
+						</span>
+				</div>
+				</form>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					Wifi Information
+					<span class="widget-list-status">
+							<p>  Access Point SSID = %_apname_%
+						  <br> Access Point IP = %_apip_%
+							<p>  Wifi Client SSID = %_ssidname_%
+						  <br> Wifi Client IP = %_clientip_%
+						</span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					Device Information
+					<span class="widget-list-status">
+						<p> Software Compiled = %_compile_%
+					  <br> Heap Size = %_heap_% bytes
+					  <br> Flash Size = %_flashsize_% bytes
+					  <br> Flash Used = %_sketchsize_% bytes
+					  <br> Flash Free Space = %_freespace_% bytes
+					  <br> Up Time = %_uptime_%
+					  <br> VCC = %_vcc_% mv
+					  <br> RSSI = %_rssi_%
+					  <br> CPU freq = %_cpu_% Mhz
+					</span>
+
+				</div>
+			</li>
+		</ol>
+
+		<ol class="widget-list" id="Signage LEDs">
+			<li>
+				<div class="widget-list-link">
+					<button style="width: 150px;" onclick="connection.send('s:1');">Red</button> <span>Solid on, Red.</span>
+					<button style="width: 150px;" onclick="connection.send('s:2');">Yellow</button> <span>Solid on, Yellow.</span>
+					<button style="width: 150px;" onclick="connection.send('s:3');">Green</button> <span>Solid on, Green.</span>
+					<button style="width: 150px;" onclick="connection.send('s:4');">Turquoise</button> <span>Solid on, Turquoise.</span>
+					<button style="width: 150px;" onclick="connection.send('s:5');">Blue</button> <span>Solid on, Blue.</span>
+					<button style="width: 150px;" onclick="connection.send('s:6');">Purple</button> <span>Solid on, Green.</span>
+					<button style="width: 150px;" onclick="connection.send('s:7');">Pulse</button> <span>Red Heartbeat Pattern</span>
+					<button style="width: 150px;" onclick="connection.send('s:0');">Rainbow</button> <span>Rainbow Crossfade Pattern</span>
+				</div>
+			</li>
+		</ol>
+
+		<ul class="widget-tabs">
+			<li class="widget-tab">
+				<a href="#Settings" class="widget-tab-link">Settings</a>
+				<!-- Omitting the end tag is valid HTML and removes the space in-between inline blocks. -->
+			</li>
+			<li class="widget-tab">
+				<a href="#Manual" class="widget-tab-link">Manual Mode</a>
+			</li>
+		</ul>
+	</div>
+
+
+
+
+
+
+
+
+
+
+</body>
+
+<script>
+	var connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
+	//var connection = new WebSocket('ws://192.168.0.10:81/', ['arduino']);
+	connection.onmessage = function(e) {
+		var data = JSON.parse(e.data);
+		console.log(data.message);
+	};
+	connection.onopen = function() {
+		connection.send('Connect ' + new Date());
+	};
+	connection.onerror = function(error) {
+		console.log('WebSocket Error ', error);
+	};
+	connection.onmessage = function(e) {
+		var status = e.data.split(",");
+		console.log(status);
+	};
+
+	function sendData() {
+		var val = parseInt(document.getElementById('datalist').value);
+		connection.send("G0 X" + val);
+	}
+
+	function hasClass(ele, cls) {
+		return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+	}
+
+	function addClass(ele, cls) {
+		if (!hasClass(ele, cls)) ele.className += " " + cls;
+	}
+
+	function removeClass(ele, cls) {
+		if (hasClass(ele, cls)) {
+			var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+			ele.className = ele.className.replace(reg, ' ');
+		}
+	}
+</script>
+
+<script>
+	function c(l) {
+		console.log(l);
+		document.getElementById('ssid').value = l.innerText || l.textContent;
+		document.getElementById('psk').value = "";
+		document.getElementById('psk').focus();
+	}
+</script>
+
+</html>
