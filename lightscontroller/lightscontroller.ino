@@ -19,6 +19,7 @@ long sum = 0;
 int avg = 0;
 bool forceon = true;
 
+
 unsigned long previousMillis = 0; 
 long interval = 1000; 
 unsigned long wifiMillis = 0;
@@ -71,7 +72,16 @@ void setup() {
       USE_SERIAL.printf("\n\n\n\n");
     #endif
 
-    delay(10);
+    delay(200);
+    USE_SERIAL.println("[PRE] Checking Flash Config...");
+    uint32_t realSize = ESP.getFlashChipRealSize();
+    uint32_t ideSize = ESP.getFlashChipSize();
+    if (ideSize != realSize) {
+      USE_SERIAL.println("Flash Chip configuration wrong!\n");
+    } else {
+      USE_SERIAL.println("Flash Chip configuration ok.\n");
+    }
+
 
     // SETUP GPIO
     #ifdef DEBUG
