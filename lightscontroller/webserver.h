@@ -40,7 +40,7 @@ String getContentType(String filename){
 }
 
 void handle_aboutdevice() {
-
+//  USE_SERIAL.println(server.uri());
   String qsid = server.arg("ssid");
   String qpass = server.arg("psk");
   if (qsid.length() > 0 && qpass.length() > 0) {
@@ -63,6 +63,12 @@ void handle_aboutdevice() {
     } else {
       Serial.println("Config saved");
     }
+  }
+  String dawnmode = server.arg("dawndusk");
+  if (dawnmode.length() > 0) {
+    forceon = false;
+  } else {
+    forceon = true;
   }
 
   const uint8_t bufsize = 10; 
@@ -120,6 +126,8 @@ void handle_aboutdevice() {
   char cpu[bufsize] ; 
   char wifiip[bufsize];
   char accesspointip[bufsize];
+  char dawndusk[bufsize];
+  
   strcpy(accesspointip, String(   WiFi.softAPIP().toString()       ).c_str()   );  
   strcpy(heap,        String(   ESP.getFreeHeap()).c_str() );
   strcpy(flashsize,   String(   ESP.getFlashChipSize()).c_str()   );
@@ -133,6 +141,13 @@ void handle_aboutdevice() {
   strcpy(rssi, String(   WiFi.RSSI()       ).c_str()   );
   strcpy(cpu, String(   ESP.getCpuFreqMHz()         ).c_str()   );
   strcpy(wifiip, String(   WiFi.localIP().toString()       ).c_str()   );
+
+  if (forceon) {
+    strcpy(dawndusk, String("").c_str()   );
+  } else {
+    strcpy(dawndusk, String("checked").c_str()   );
+  }
+  
   
   
      
@@ -158,6 +173,7 @@ void handle_aboutdevice() {
   printer.AddVariable(15, "clientip",   wifiip   ); 
   printer.AddVariable(16, "apip",       accesspointip   ); 
   printer.AddVariable(17, "apname",   softapname   ); 
+  printer.AddVariable(18, "duskchecked",   dawndusk   ); 
   
    
   printer.SendPage();

@@ -36,6 +36,7 @@ bool loadConfig() {
   redval = json["red"];
   greenval = json["green"];
   blueval = json["blue"];
+  forceon = json["forceon"];
   analogWrite(12, redval);
   analogWrite(13, greenval);
   analogWrite(14, blueval);
@@ -52,6 +53,7 @@ bool saveConfig() {
   json["green"] = greenval;
   json["blue"] = blueval;
   json["sequence"] = sequence;
+  json["forceon"] = forceon;
   
   File configFile = SPIFFS.open("/config.json", "w");
   if (!configFile) {

@@ -11,6 +11,14 @@
 //  Uncomment to add Serial Prints - but comment for compile, too resource heavy
 #define DEBUG
 
+// Analog Light sensor
+int lightthreshold = 500;
+static const int MaxCount = 100;
+int currentCount = 0;
+long sum = 0;
+int avg = 0;
+bool forceon = true;
+
 unsigned long previousMillis = 0; 
 long interval = 1000; 
 unsigned long wifiMillis = 0;
@@ -21,7 +29,6 @@ ESP8266WebServer server(80);
 HTTPPrinter printer; 
 IPAddress ip;     
 const char compile_date[] = __DATE__ " " __TIME__;
-ADC_MODE(ADC_VCC);
 // DNS server
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
@@ -73,6 +80,8 @@ void setup() {
     pinMode(12, OUTPUT);
     pinMode(13, OUTPUT);
     pinMode(14, OUTPUT);
+    pinMode(0, INPUT);
+    pinMode(2, INPUT);
     // LED OFF
     setColourRgb(0, 0, 0);
     delay(1);
@@ -83,7 +92,7 @@ void setup() {
     #endif
     if (!SPIFFS.begin()) {
       #ifdef DEBUG
-        Serial.println("Failed to mount file system");
+        USE_SERIAL.println("Failed to mount file system");
       #endif
       return;
     }
@@ -203,12 +212,16 @@ void setup() {
     }
 
     // SETUP WEBSOCKET
-    USE_SERIAL.println("[8/9] Setting up WebSocket...");
+    #ifdef DEBUG
+      USE_SERIAL.println("[8/9] Setting up WebSocket...");
+    #endif
     webSocket.begin();
     webSocket.onEvent(webSocketEvent);
 
    // SETUP SPIFFS WEBSERVER
+   #ifdef DEBUG
    USE_SERIAL.println("[9/9] Starting Webserver...");
+   #endif
    //called when the url is not defined here
    //use it to load content from SPIFFS
    server.on("/", handle_aboutdevice);
@@ -221,6 +234,7 @@ void setup() {
     server.begin();
 
     // End Boot process: Ready for Action
+    
     USE_SERIAL.println("");
     USE_SERIAL.println("BOOT COMPLETE");
 
@@ -230,27 +244,52 @@ void housekeeping() {
   dnsServer.processNextRequest();
   webSocket.loop();
   server.handleClient();
+  
+  if(currentCount < MaxCount) {
+    currentCount++;
+    sum += analogRead(A0);
+  } else {
+    avg = sum / MaxCount;
+    currentCount = 0;
+    sum = 0;   
+  } 
 }
 
 void loop() {
       
-    // USE_SERIAL.print("Seq" );
-    // USE_SERIAL.println(sequence);
-  
-    bool btn2 = digitalRead(pin_btn2); 
+  // USE_SERIAL.print("Seq" );
+  // USE_SERIAL.println(sequence);
 
-    if (!btn2) {
-      sequence++;
-      delay(100);
-      if (sequence == 8 || sequence > 8 ) {
-        sequence = 1;
-      }
-      saveConfig();
-    } 
-    housekeeping();
-    runProgram(sequence);
-   
-    delay(1);
+  bool btn2 = digitalRead(pin_btn2); 
+  if (!btn2) {
+    sequence++;
+    delay(200);
+    if (sequence == 9 || sequence > 9 ) {
+      sequence = 1;
+    }
+    saveConfig();
+  } 
+  
+  bool btn0 = digitalRead(pin_btn0); 
+  if (!btn0) {
+    forceon = !forceon;
+    setColourRgb(1024, 1024, 1024);
+    delay(200);  
+    setColourRgb(0, 0, 0);
+    saveConfig();
+  } 
+  
+  housekeeping();
+
+  if (forceon) { // then always turn on
+    runProgram(sequence);  
+  } else if (avg < lightthreshold) { // if its not in forceon mode, we check, is it dark? then turn on
+    runProgram(sequence);  
+  } else { // Not dark yet, so turn off.  Or its just turned morning. Off again. 
+    setColourRgb(0, 0, 0);
+  }
+  housekeeping();     
+  delay(1);
 }
 
 void setColourRgb(unsigned int red, unsigned int green, unsigned int blue) {
@@ -281,25 +320,29 @@ void runProgram(unsigned int id) {
       break;
     case 7:  // Pulsing Heartbeat
       setColourRgb(1024, 0, 0);
-      if (digitalRead(pin_btn2) == 0) {
+      if (digitalRead(pin_btn2) == 0 || digitalRead(pin_btn0) == 0) {
           break;
         }
-      delay(200);                       // wait for a second
+      housekeeping();
+      delay(200);
       setColourRgb(100, 0, 0);
-      if (digitalRead(pin_btn2) == 0) {
+      if (digitalRead(pin_btn2) == 0 || digitalRead(pin_btn0) == 0) {
           break;
         }
+      housekeeping();
       delay(200);
       setColourRgb(1024, 0, 0);
-      if (digitalRead(pin_btn2) == 0) {
+      if (digitalRead(pin_btn2) == 0 || digitalRead(pin_btn0) == 0) {
           break;
         }
-      delay(200);                       // wait for a second
+      housekeeping();
+      delay(200);
       for(int fadeValue = 1024 ; fadeValue >= 100; fadeValue -=5){   ///fades the LED
         setColourRgb(fadeValue, 0, 0);
-        if (digitalRead(pin_btn2) == 0) {
+        if (digitalRead(pin_btn2) == 0 || digitalRead(pin_btn0) == 0) {
           break;
         }
+        housekeeping();
         delay(3);
       }
       break;
@@ -318,7 +361,7 @@ void runProgram(unsigned int id) {
           rgbColour[decColour] -= 1;
           rgbColour[incColour] += 1;
           setColourRgb(rgbColour[0]*4, rgbColour[1]*4, rgbColour[2]*4);
-          if (digitalRead(pin_btn2) == 0) {
+          if (digitalRead(pin_btn2) == 0 || digitalRead(pin_btn0) == 0) {
             break;
           }
           housekeeping();
@@ -326,13 +369,8 @@ void runProgram(unsigned int id) {
         }
       }
       default: // Fallback to all-on
-      // do nothing, the websocket event set the color
-       analogWrite(12, 1024);
-       analogWrite(13, 1024);
-       analogWrite(14, 1024);
-      break;
-
-    
+        // do nothing
+        break;   
     }
 }
 

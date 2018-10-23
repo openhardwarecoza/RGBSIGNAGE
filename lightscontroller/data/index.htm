@@ -11,29 +11,35 @@
 		<ol class="widget-list" id="Settings">
 			<li>
 				<form action="/">
-					<table class="widget-table">
-						<tr>
-							<td>
-								<div class="widget-list-link">
-									Wifi
-									<span class="widget-list-status">
+					<div class="widget-list-link">
+						<input type="checkbox" name="dawndusk" value="true" %_duskchecked_%> Dusk/Dawn <span class="widget-list-status">When it goes dark, turn on the LEDs. Then turn off when it becomes light again</span>
+					</div>
+			</li>
+			<li>
+
+				<table class="widget-table">
+					<tr>
+						<td>
+							<div class="widget-list-link">
+								Wifi
+								<span class="widget-list-status">
 										SSID:<br>
 										<input type="text" id="ssid" name="ssid" value="%_ssid_%"><br>
 				   					Password:<br>
 				   					<input type="text" id="psk" name="psk" value="%_psk_%"><br>
 									</span>
-								</div>
-							</td>
-							<td>
-								<div class="widget-list-ssid">
-									Available Networks
-									<span class="widget-list-status">
+							</div>
+						</td>
+						<td>
+							<div class="widget-list-ssid">
+								Available Networks
+								<span class="widget-list-status">
 										%_availssids_%
 									</span>
-								</div>
-							</td>
-						</tr>
-					</table>
+							</div>
+						</td>
+					</tr>
+				</table>
 
 
 			</li>
