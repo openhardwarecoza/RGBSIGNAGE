@@ -14,7 +14,7 @@
 unsigned long previousMillis = 0; 
 long interval = 1000; 
 unsigned long wifiMillis = 0;
-int sequence = 0;
+int sequence = 1;
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 ESP8266WebServer server(80);
@@ -27,6 +27,7 @@ const byte DNS_PORT = 53;
 DNSServer dnsServer;
 const char *myHostname = "sign";
 char softapname[] = "SignSetup";
+char softappsk[] = "karooheart";
 
 String formatBytes(size_t bytes){
   if (bytes < 1024){
@@ -169,7 +170,7 @@ void setup() {
     #ifdef DEBUG
       USE_SERIAL.println("[5/9] Setting up Wifi Access Point...");  
     #endif
-    WiFi.softAP(softapname);
+    WiFi.softAP(softapname, softappsk);
     IPAddress myIP = WiFi.softAPIP();
     #ifdef DEBUG
       USE_SERIAL.println(myIP);
@@ -242,7 +243,7 @@ void loop() {
       sequence++;
       delay(100);
       if (sequence == 8 || sequence > 8 ) {
-        sequence = 0;
+        sequence = 1;
       }
       saveConfig();
     } 
@@ -324,11 +325,11 @@ void runProgram(unsigned int id) {
           delay(5);
         }
       }
-      default: // Manually set color
+      default: // Fallback to all-on
       // do nothing, the websocket event set the color
-       analogWrite(12, redval);
-       analogWrite(13, greenval);
-       analogWrite(14, blueval);
+       analogWrite(12, 1024);
+       analogWrite(13, 1024);
+       analogWrite(14, 1024);
       break;
 
     

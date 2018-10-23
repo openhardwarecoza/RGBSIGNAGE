@@ -138,7 +138,7 @@ body {
 .widget-list:target:nth-of-type(2) ~ .widget-tabs > .widget-tab:nth-child(2) > .widget-tab-link,
 .widget-list:target:last-of-type ~ .widget-tabs > .widget-tab:last-child > .widget-tab-link {
   margin: 0 -1px;
-  border-top: 4px solid #00cc00;
+  border-top: 4px solid #cc0000;
 }
 
 
@@ -333,4 +333,85 @@ h3 {
 .two-bars .bar:not(.first-bar):not(.second-bar) {
   background-color: #fafafa;
   border: thin solid #f3f3f3;
+}
+
+button {
+  border: 1px solid #880000;
+  background-color: #cc0000;
+  color: #ffffff;
+  padding: 5px 10px;
+}
+
+button:hover {
+  border: 1px solid #880000;
+  background-color: #ee0000;
+  color: #ffffff;
+  padding: 5px 10px;
+}
+
+button:disabled,
+button[disabled]{
+  border: 1px solid #cccccc;
+  background-color: #eeeeee;
+  color: #cccccc;
+}
+
+
+.pulsate {
+    -webkit-animation: pulsate 1s ease-out;
+    -webkit-animation-iteration-count: infinite;
+    opacity: 1;
+}
+@-webkit-keyframes pulsate {
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+
+.rainbow {
+  /* Chrome, Safari, Opera */
+  -webkit-animation: rainbow 3s infinite;
+
+  /* Internet Explorer */
+  -ms-animation: rainbow 3s infinite;
+
+  /* Standar Syntax */
+  animation: rainbow 3s infinite;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes rainbow{
+  0%{color: orange;}
+  10%{color: purple;}
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
+}
+
+/* Internet Explorer */
+@-ms-keyframes rainbow{
+  0%{color: orange;}
+  10%{color: purple;}
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
+}
+
+/* Standar Syntax */
+@keyframes rainbow{
+  0%{color: orange;}
+  10%{color: purple;}
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
 }
