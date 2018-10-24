@@ -34,8 +34,9 @@ const char compile_date[] = __DATE__ " " __TIME__;
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
 const char *myHostname = "sign";
-char softapname[] = "SignSetup";
-char softappsk[] = "karooheart";
+
+const char *softapname = "SignSetup";
+const char *softappsk = "karooheart";
 
 String formatBytes(size_t bytes){
   if (bytes < 1024){
@@ -54,17 +55,6 @@ String formatBytes(size_t bytes){
 #include "settings.h" // save/load settings from SPIFFS
 #include "webserver.h" // onboard webserver
 #include "websocket.h" // websocket for communication/feedback to/from the frontend webpages
-
-/*  Working: 
- *  SPIFFS Webserver
- *  Websocket Server
- *  
- */
-
-
-
-// Wifi Mode                    
-
 
 void setup() {
     #ifdef DEBUG
@@ -137,7 +127,8 @@ void setup() {
       USE_SERIAL.println("[4/9] Setting up Wifi Client...");  
     #endif
   
-    WiFi.mode(WIFI_STA);
+    // WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_AP_STA);
     WiFi.begin(ssid, passphrase);
 
     #ifdef DEBUG
@@ -189,7 +180,7 @@ void setup() {
     #ifdef DEBUG
       USE_SERIAL.println("[5/9] Setting up Wifi Access Point...");  
     #endif
-    WiFi.softAP(softapname, softappsk);
+    WiFi.softAP(softapname);
     IPAddress myIP = WiFi.softAPIP();
     #ifdef DEBUG
       USE_SERIAL.println(myIP);

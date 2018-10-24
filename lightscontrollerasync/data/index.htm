@@ -1,0 +1,198 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<img style="margin-left: 50px;" src="logo.png" />
+	<div class="widget">
+		<ol class="widget-list" id="Settings">
+			<li>
+				<form action="/">
+					<div class="widget-list-link">
+						<input type="checkbox" name="dawndusk" value="true" %_duskchecked_%> Dusk/Dawn <span class="widget-list-status">When it goes dark, turn on the LEDs. Then turn off when it becomes light again</span>
+					</div>
+			</li>
+			<li>
+
+				<table class="widget-table">
+					<tr>
+						<td>
+							<div class="widget-list-link">
+								Wifi
+								<span class="widget-list-status">
+										SSID:<br>
+										<input type="text" id="ssid" name="ssid" value="%_ssid_%"><br>
+				   					Password:<br>
+				   					<input type="text" id="psk" name="psk" value="%_psk_%"><br>
+									</span>
+							</div>
+						</td>
+						<td>
+							<div class="widget-list-ssid">
+								Available Networks
+								<span class="widget-list-status">
+										%_availssids_%
+									</span>
+							</div>
+						</td>
+					</tr>
+				</table>
+
+
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<span class="widget-list-status">
+							<button type="submit" value="Save">Save</button>
+						</span>
+				</div>
+				</form>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					Wifi Information
+					<span class="widget-list-status">
+							<p>  Access Point SSID = %_apname_%
+						  <br> Access Point IP = %_apip_%
+							<p>  Wifi Client SSID = %_ssidname_%
+						  <br> Wifi Client IP = %_clientip_%
+						</span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					Device Information
+					<span class="widget-list-status">
+						<p> Software Compiled = %_compile_%
+					  <br> Heap Size = %_heap_% bytes
+					  <br> Flash Size = %_flashsize_% bytes
+					  <br> Flash Used = %_sketchsize_% bytes
+					  <br> Flash Free Space = %_freespace_% bytes
+					  <br> Up Time = %_uptime_%
+					  <br> RSSI = %_rssi_%
+					  <br> CPU freq = %_cpu_% Mhz
+					</span>
+
+				</div>
+			</li>
+		</ol>
+
+		<ol class="widget-list" id="Manual">
+			<li>
+				<div class="widget-list-link">
+					Setup LED Mode
+					<span class="widget-list-status">
+					<span id="websocketok">Use the buttons below to configure the LED mode to display</span>
+					<span id="websocketdown" style="display: none;">Waiting for WebSocket connection, please wait...</span>
+					</span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:1');">Red</button> <span class="widget-list-status">Solid on, <span style="color: #cc0000;">Red</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:2');">Yellow</button> <span class="widget-list-status">Solid on, <span style="color: #cccc00;">Yellow</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:3');">Green</button> <span class="widget-list-status">Solid on, <span style="color: #00cc00;">Green</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:4');">Turquoise</button> <span class="widget-list-status">Solid on, <span style="color: #00cccc;">Turquoise</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:5');">Blue</button> <span class="widget-list-status">Solid on, <span style="color: #0000cc;">Blue</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:6');">Purple</button> <span class="widget-list-status">Solid on, <span style="color: #cc00cc;">Purple</span></span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:7');">Pulse</button> <span class="widget-list-status">Red <span class="pulsate" style="color: #cc0000;">Heartbeat</span> Pattern</span>
+				</div>
+			</li>
+			<li>
+				<div class="widget-list-link">
+					<button class="button" style="width: 150px;" onclick="connection.send('s:8');">Rainbow</button> <span class="widget-list-status">Rainbow <span class="rainbow">Crossfade</span> Pattern</span>
+				</div>
+			</li>
+		</ol>
+
+		<ul class="widget-tabs">
+			<li class="widget-tab">
+				<a href="#Settings" class="widget-tab-link">Settings</a>
+				<!-- Omitting the end tag is valid HTML and removes the space in-between inline blocks. -->
+			</li>
+			<li class="widget-tab">
+				<a href="#Manual" class="widget-tab-link">Signage LEDs</a>
+			</li>
+		</ul>
+	</div>
+
+</body>
+
+<script>
+	var connection = new WebSocket('ws://' + location.hostname + ':/ws', ['arduino']);
+	connection.onmessage = function(e) {
+		var data = JSON.parse(e.data);
+		console.log(data.message);
+	};
+	connection.onopen = function() {
+		connection.send('Connect ' + new Date());
+	};
+	connection.onerror = function(error) {
+		console.log('WebSocket Error ', error);
+	};
+	connection.onmessage = function(e) {
+		var status = e.data.split(",");
+		console.log(status);
+	};
+
+	setInterval(function() {
+		var websocketok = document.getElementById("websocketok");
+		var websocketdown = document.getElementById("websocketdown");
+		if (connection.readyState !== 1) {
+			var elems = document.getElementsByClassName("button");
+			for (var i = 0; i < elems.length; i++) {
+				elems[i].disabled = true;
+			}
+			websocketok.style.display = "none";
+			websocketdown.style.display = "block";
+		} else {
+			var elems = document.getElementsByClassName("button");
+			for (var i = 0; i < elems.length; i++) {
+				elems[i].disabled = false
+			}
+
+			websocketok.style.display = "block";
+			websocketdown.style.display = "none";
+
+
+		}
+	}, 400)
+</script>
+
+<script>
+	function c(l) {
+		console.log(l);
+		document.getElementById('ssid').value = l.innerText || l.textContent;
+		document.getElementById('psk').value = "";
+		document.getElementById('psk').focus();
+	}
+</script>
+
+</html>
