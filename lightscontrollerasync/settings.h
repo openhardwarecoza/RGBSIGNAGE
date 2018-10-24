@@ -88,3 +88,34 @@ void parseParams(String param, String value) {
   }
 
 }
+
+void scanforwifi() {
+  scanssids = "";
+  int n = WiFi.scanNetworks();
+  if (n > 0)
+  {
+    for (int i = 0; i < n; ++i)
+    {
+      // Print SSID and RSSI for each network found
+      if (WiFi.RSSI(i) < -90) {
+        scanssids += "<div class=\"signal-bars mt1 sizing-box bad one-bar\">";
+      } else if (WiFi.RSSI(i) < -80) {
+        scanssids += "<div class=\"signal-bars mt1 sizing-box bad two-bars\">";
+      } else if (WiFi.RSSI(i) < -70) {
+        scanssids += "<div class=\"signal-bars mt1 sizing-box ok two-bars\">";
+      } else if (WiFi.RSSI(i) < -67) {
+       scanssids += "<div class=\"signal-bars mt1 sizing-box good three-bars\">";
+      } else if (WiFi.RSSI(i) < -30) {
+        scanssids += "<div class=\"signal-bars mt1 sizing-box good four-bars\">";
+      }
+      scanssids += "<div class=\"first-bar bar\"></div><div class=\"second-bar bar\"></div><div class=\"third-bar bar\"></div><div class=\"fourth-bar bar\"></div></div>";
+      scanssids += "<a onclick=\"c(this)\" style=\"cursor: pointer;\">";
+      scanssids += WiFi.SSID(i);
+      scanssids += "</a>  ";
+      scanssids += (WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"&#x1f512;";
+      scanssids += "  ";
+      scanssids += WiFi.RSSI(i);
+      scanssids += "dbm<br><hr>";
+    }
+  }
+}

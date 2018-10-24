@@ -4,6 +4,7 @@
 #include <Hash.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
 #include <ArduinoJson.h>
 
 //  Uncomment to add Serial Prints - but comment for compile, too resource heavy
@@ -13,10 +14,12 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 AsyncEventSource events("/events");
+const byte DNS_PORT = 53;
+DNSServer dnsServer;
 
 char* ssid = "OPS_DSL";
 char* password = "ffeeddccbbaa";
-const char * hostName = "SignSetup(async)";
+const char * hostName = "SignSetup";
 const char compile_date[] = __DATE__ " " __TIME__;
 int pin_btn0 = 0;
 int pin_btn2 = 2;
@@ -108,11 +111,20 @@ void setup(){
   #endif
   setupRGB();
 
+  #ifdef DEBUG
+    Serial.println("[9/9] Setting up Captive Portal...");  
+  #endif
+  /* Setup the DNS server redirecting all the domains to the apIP */
+  IPAddress myIP = WiFi.softAPIP();
+  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer.start(DNS_PORT, "*", myIP);
+
+
   scanforwifi();
 }
 
 void loop(){
-
+  dnsServer.processNextRequest();
   // Scan for new Wifi Networks
   unsigned long currentScanMillis = millis();
   if (currentScanMillis - previousScanMillis >= scanInterval) {
@@ -121,35 +133,4 @@ void loop(){
     scanforwifi();
   }
   
-}
-
-void scanforwifi() {
-  scanssids = "";
-  int n = WiFi.scanNetworks();
-  if (n > 0)
-  {
-    for (int i = 0; i < n; ++i)
-    {
-      // Print SSID and RSSI for each network found
-      if (WiFi.RSSI(i) < -90) {
-        scanssids += "<div class=\"signal-bars mt1 sizing-box bad one-bar\">";
-      } else if (WiFi.RSSI(i) < -80) {
-        scanssids += "<div class=\"signal-bars mt1 sizing-box bad two-bars\">";
-      } else if (WiFi.RSSI(i) < -70) {
-        scanssids += "<div class=\"signal-bars mt1 sizing-box ok two-bars\">";
-      } else if (WiFi.RSSI(i) < -67) {
-       scanssids += "<div class=\"signal-bars mt1 sizing-box good three-bars\">";
-      } else if (WiFi.RSSI(i) < -30) {
-        scanssids += "<div class=\"signal-bars mt1 sizing-box good four-bars\">";
-      }
-      scanssids += "<div class=\"first-bar bar\"></div><div class=\"second-bar bar\"></div><div class=\"third-bar bar\"></div><div class=\"fourth-bar bar\"></div></div>";
-      scanssids += "<a onclick=\"c(this)\" style=\"cursor: pointer;\">";
-      scanssids += WiFi.SSID(i);
-      scanssids += "</a>  ";
-      scanssids += (WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"&#x1f512;";
-      scanssids += "  ";
-      scanssids += WiFi.RSSI(i);
-      scanssids += "dbm<br><hr>";
-    }
-  }
 }

@@ -56,6 +56,15 @@ void setWebserver() {
     client->send("hello!",NULL,millis(),1000);
   });
   server.addHandler(&events);
+
+  server.on("/generate_204", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->redirect("/index.htm");
+  });
+
+  server.on("/fwlink", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->redirect("/index.htm");
+  });
+
   
   server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
@@ -69,6 +78,7 @@ void setWebserver() {
     }
     request->send(SPIFFS, "/index.htm", String(), false, processor);
   });
+
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.htm").setTemplateProcessor(processor);
 
   server.onNotFound([](AsyncWebServerRequest *request){
