@@ -69,14 +69,18 @@ void setWebserver() {
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    int params = request->params();
-    for(int i=0;i<params;i++){
-      AsyncWebParameter* p = request->getParam(i);
-      parseParams(p->name().c_str(), p->value().c_str());
-    }
-    request->send(SPIFFS, "/index.htm", String(), false, processor);
-  });
+//  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+//    int params = request->params();
+//    for(int i=0;i<params;i++){
+//      AsyncWebParameter* p = request->getParam(i);
+//      Serial.printf("AsyncWebServerParam[%s]: %s\n", p->name().c_str(), p->value().c_str());
+//    }
+//      if(request->hasParam("ssid")){
+//        AsyncWebParameter* p = request->getParam("ssid");
+//        ssid = const_cast<char*>(p->value().c_str());
+//      }
+//    request->send(SPIFFS, "/index.htm", String(), false, processor);
+//  });
 
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.htm").setTemplateProcessor(processor);
 

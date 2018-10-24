@@ -30,8 +30,8 @@ bool loadConfig() {
   json.prettyPrintTo(Serial);
   Serial.printf("\n");
 
-//  ssid =  json["ssid"];
-//  password = json["psk"];
+  //strcpy(ssid, json["ssid"]);
+  //strcpy(passphrase, json["psk"]);
   sequence = json["sequence"];
   redval = json["red"];
   greenval = json["green"];
@@ -68,26 +68,33 @@ bool saveConfig() {
   return true;
 }
 
-void parseParams(String param, String value) {
-  Serial.print("param:");
-  Serial.print(param);
-  Serial.print(" / Value:");
-  Serial.println(value);
-  if (param == "dawndusk") {
-    if (value == "true") {
-      forceon = false;
-    } else {
-      forceon = true;
-    }  
-  }
-
-  if (!saveConfig()) {
-    Serial.println("Failed to save config");
-  } else {
-    Serial.println("Config saved");
-  }
-
-}
+//void parseParams(String param, String value) {
+//  
+//  if (param == "psk") {
+//    char *q = const_cast<char*>(value.c_str());
+//    password = q;
+//  }
+//
+//  if (param == "ssid") {
+//    char *p = const_cast<char*>(value.c_str());
+//    ssid = p;
+//  }
+//  
+//  if (param == "dawndusk") {
+//    if (value == "true") {
+//      forceon = false;
+//    } else {
+//      forceon = true;
+//    }  
+//  }
+//
+//  if (!saveConfig()) {
+//    Serial.println("Failed to save config");
+//  } else {
+//    Serial.println("Config saved");
+//  }
+//
+//}
 
 void scanforwifi() {
   scanssids = "";
