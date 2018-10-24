@@ -1,3 +1,11 @@
+void parseWebsocket(String message) {
+  if (message.indexOf("s:") == 0) {
+    message = message.substring(2);
+    sequence = message.toInt();
+    saveConfig();
+  }        
+}
+
 void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
   if(type == WS_EVT_CONNECT){
     Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
@@ -28,6 +36,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         }
       }
       Serial.printf("%s\n",msg.c_str());
+      parseWebsocket(msg);
 
       if(info->opcode == WS_TEXT)
         client->text("I got your text message");
@@ -55,6 +64,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         }
       }
       Serial.printf("%s\n",msg.c_str());
+      parseWebsocket(msg);
 
       if((info->index + len) == info->len){
         Serial.printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), info->num, info->len);
@@ -68,4 +78,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
     }
   }
+}
+
+void setupWebSocket(){
+  ws.onEvent(onWsEvent);
 }

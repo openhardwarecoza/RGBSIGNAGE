@@ -6,13 +6,14 @@
 </head>
 
 <body>
-	<img style="margin-left: 50px;" src="logo.png" />
 	<div class="widget">
 		<ol class="widget-list" id="Settings">
 			<li>
 				<form action="/">
 					<div class="widget-list-link">
-						<input type="checkbox" name="dawndusk" value="true" %_duskchecked_%> Dusk/Dawn <span class="widget-list-status">When it goes dark, turn on the LEDs. Then turn off when it becomes light again</span>
+						<input type="radio" name="dawndusk" value="true" %_duskchecked_%> Dawn/Dusk Mode<br>
+						<input type="radio" name="dawndusk" value="false" %_duskunchecked_%> Always-on Mode<br>
+						<span class="widget-list-status">When it goes dark, turn on the LEDs. Then turn off when it becomes light again</span>
 					</div>
 			</li>
 			<li>
@@ -35,6 +36,24 @@
 								Available Networks
 								<span class="widget-list-status">
 										%_availssids_%
+
+										<!-- <div class="signal-bars mt1 sizing-box good four-bars">
+											<div class="first-bar bar"></div>
+											<div class="second-bar bar"></div>
+											<div class="third-bar bar"></div>
+											<div class="fourth-bar bar"></div>
+										</div>
+										<a onclick="c(this)" style="cursor: pointer;">OPS_DSL</a>  &#x1f512;  -44dbm<br>
+										<hr>
+										<div class="signal-bars mt1 sizing-box ok two-bars">
+											<div class="first-bar bar"></div>
+											<div class="second-bar bar"></div>
+											<div class="third-bar bar"></div>
+											<div class="fourth-bar bar"></div>
+										</div>
+										<a onclick="c(this)" style="cursor: pointer;">CELL3_M3</a>  &#x1f512;  -80dbm<br>
+										<hr> -->
+
 									</span>
 							</div>
 						</td>

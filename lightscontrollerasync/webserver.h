@@ -35,14 +35,19 @@ String processor(const String& var)
       return (String("checked"));
     }
   }
-   
+  if(var == "_duskunchecked_") {
+    if (forceon) {
+      return (String("checked"));
+    } else {
+      return (String(""));
+    }
+  }
+  if(var == "_availssids_") 
+    return (scanssids);
+  
+     
   return String();
 }
-
-//  printer.AddVariable(2,  "flashsize",  flashsize  );   
-//  printer.AddVariable(3,  "sketchsize", sketchsize  ); 
-//  printer.AddVariable(4,  "freespace",  freespace   ); 
-
 
 void setWebserver() {
   server.addHandler(&ws);
@@ -51,13 +56,19 @@ void setWebserver() {
     client->send("hello!",NULL,millis(),1000);
   });
   server.addHandler(&events);
-
-//  server.addHandler(new SPIFFSEditor(http_username,http_password));
-
+  
   server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    int params = request->params();
+    for(int i=0;i<params;i++){
+      AsyncWebParameter* p = request->getParam(i);
+      parseParams(p->name().c_str(), p->value().c_str());
+    }
+    request->send(SPIFFS, "/index.htm", String(), false, processor);
+  });
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.htm").setTemplateProcessor(processor);
 
   server.onNotFound([](AsyncWebServerRequest *request){
@@ -96,23 +107,17 @@ void setWebserver() {
     for(i=0;i<params;i++){
       AsyncWebParameter* p = request->getParam(i);
       if(p->isFile()){
-        Serial.printf("_FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
+        Serial.printf("PARAMS_FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
       } else if(p->isPost()){
-        Serial.printf("_POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+        Serial.printf("PARAMS_POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
       } else {
-        Serial.printf("_GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
+        Serial.printf("PARAMS_GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
       }
     }
 
     request->send(404);
   });
-  server.onFileUpload([](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final){
-    if(!index)
-      Serial.printf("UploadStart: %s\n", filename.c_str());
-    Serial.printf("%s", (const char*)data);
-    if(final)
-      Serial.printf("UploadEnd: %s (%u)\n", filename.c_str(), index+len);
-  });
+
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
     if(!index)
       Serial.printf("BodyStart: %u\n", total);
