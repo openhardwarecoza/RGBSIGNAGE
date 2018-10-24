@@ -27,11 +27,11 @@ int redval = 0;
 int greenval = 0;
 int blueval = 0;
 int sequence = 1;
-bool forceon = true;
 String scanssids = "";
 unsigned long previousScanMillis = 0;
-const long scanInterval = 10000;
+const long scanInterval = 30000;
 
+#include "lightsensor.h" // RGB LED controller
 #include "settings.h" // Save/Load settings from SPIFFS
 #include "rgb.h" // RGB LED controller
 #include "webserver.h" // onboard webserver
@@ -125,6 +125,8 @@ void setup(){
 
 void loop(){
 
+//  runLightSensor();
+
   bool btn2 = digitalRead(pin_btn2); 
   if (!btn2) {
     sequence++;
@@ -143,6 +145,14 @@ void loop(){
     setColourRgb(0, 0, 0);
     saveConfig();
   } 
+
+  if (forceon) { // then always turn on
+    runProgram(sequence);  
+  } else if (avg < lightthreshold) { // if its not in forceon mode, we check, is it dark? then turn on
+    runProgram(sequence);  
+  } else { // Not dark yet, so turn off.  Or its just turned morning. Off again. 
+    setColourRgb(0, 0, 0);
+  }
   
   dnsServer.processNextRequest();
   // Scan for new Wifi Networks
@@ -152,5 +162,6 @@ void loop(){
     previousScanMillis = currentScanMillis;
     scanforwifi();
   }
+  
   
 }
