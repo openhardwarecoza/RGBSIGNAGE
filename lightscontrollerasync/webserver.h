@@ -69,6 +69,41 @@ void setWebserver() {
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
+  server.on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
+    Serial.println("Got a Post");
+    if(request->hasArg("ssid")) {
+      String _ssid = request->arg("ssid");
+      _ssid.toCharArray(ssid, 32);
+    }
+    if(request->hasArg("psk")) {
+      String _pswd = request->arg("psk");
+      _pswd.toCharArray(password, 32);
+    }
+
+    if (!saveConfig()) {
+      Serial.println("Failed to save config");
+    } else {
+      Serial.println("Config saved");
+    }
+     request->send(SPIFFS, "/index.htm", String(), false, processor);
+//    if(request->hasArg("autostart")) {
+//      String _autostart = request->arg("autostart");
+//      settings.autostartLen = _autostart.length();
+//      _autostart.toCharArray(settings.autostart, 32);
+//      if(debug) Serial.println("new autostart = '" + _autostart + "'");
+//    }
+//    if(request->hasArg("ch")) settings.channel = request->arg("ch").toInt();
+//    if(request->hasArg("hidden")) settings.hidden = true;
+//    else settings.hidden = false;
+//    if(request->hasArg("autoExec")) settings.autoExec = true;
+//    else settings.autoExec = false;
+//    
+//    settings.save();
+//    if(debug) settings.print();
+//
+//    sendSettings(request);
+  });
+
 //  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
 //    int params = request->params();
 //    for(int i=0;i<params;i++){

@@ -58,11 +58,7 @@ void handle_aboutdevice() {
     strcpy(ssid, qsid.c_str());
     strcpy(passphrase, qpass.c_str());
     
-    if (!saveConfig()) {
-      Serial.println("Failed to save config");
-    } else {
-      Serial.println("Config saved");
-    }
+    
   }
   String dawnmode = server.arg("dawndusk");
   if (dawnmode.length() > 0) {
@@ -70,6 +66,12 @@ void handle_aboutdevice() {
   } else {
     forceon = true;
   }
+
+if (!saveConfig()) {
+      Serial.println("Failed to save config");
+    } else {
+      Serial.println("Config saved");
+    }
 
   const uint8_t bufsize = 10; 
 
