@@ -168,12 +168,12 @@ void handle_aboutdevice() {
   printer.AddVariable(8, "cpu",        cpu   ); 
   printer.AddVariable(9, "ssid",        ssid);
   printer.AddVariable(10, "psk",        passphrase ); 
-  printer.AddVariable(13, "availssids", scanssids.c_str()  ); 
-  printer.AddVariable(14, "ssidname",   ssid   ); 
-  printer.AddVariable(15, "clientip",   wifiip   ); 
-  printer.AddVariable(16, "apip",       accesspointip   ); 
-  printer.AddVariable(17, "apname",   softapname   ); 
-  printer.AddVariable(18, "duskchecked",   dawndusk   ); 
+  printer.AddVariable(11, "availssids", scanssids.c_str()  ); 
+  printer.AddVariable(12, "ssidname",   ssid   ); 
+  printer.AddVariable(13, "clientip",   wifiip   ); 
+  printer.AddVariable(14, "apip",       accesspointip   ); 
+  printer.AddVariable(15, "apname",   softapname   ); 
+  printer.AddVariable(16, "duskchecked",   dawndusk   ); 
   
    
   printer.SendPage();
