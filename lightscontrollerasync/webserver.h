@@ -80,6 +80,15 @@ void setWebserver() {
       _pswd.toCharArray(password, 32);
     }
 
+    if(request->hasArg("dawndusk")) {
+      String _dskdwn = request->arg("dawndusk");
+      if (_dskdwn == "true") {
+        forceon = false;
+      } else {
+        forceon = true;
+      }  
+    }
+    
     if (!saveConfig()) {
       Serial.println("Failed to save config");
     } else {
