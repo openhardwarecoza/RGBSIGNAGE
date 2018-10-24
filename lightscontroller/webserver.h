@@ -11,7 +11,7 @@ void handleFileList() {
     if (output != "[") output += ',';
     bool isDir = false;
     output += "{\"type\":\"";
-    output += (isDir)?"dir":"file"
+    output += (isDir)?"dir":"file";
     output += "\",\"name\":\"";
     output += String(entry.name()).substring(1);
     output += "\"}";

@@ -124,6 +124,26 @@ void setup(){
 }
 
 void loop(){
+
+  bool btn2 = digitalRead(pin_btn2); 
+  if (!btn2) {
+    sequence++;
+    delay(200);
+    if (sequence == 9 || sequence > 9 ) {
+      sequence = 1;
+    }
+    saveConfig();
+  } 
+
+  bool btn0 = digitalRead(pin_btn0); 
+  if (!btn0) {
+    forceon = !forceon;
+    setColourRgb(1024, 1024, 1024);
+    delay(200);  
+    setColourRgb(0, 0, 0);
+    saveConfig();
+  } 
+  
   dnsServer.processNextRequest();
   // Scan for new Wifi Networks
   unsigned long currentScanMillis = millis();

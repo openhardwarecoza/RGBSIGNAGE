@@ -44,8 +44,7 @@ String processor(const String& var)
   }
   if(var == "_availssids_") 
     return (scanssids);
-  
-     
+    
   return String();
 }
 
