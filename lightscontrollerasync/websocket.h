@@ -4,6 +4,9 @@ void parseWebsocket(String message) {
     sequence = message.toInt();
     saveConfig();
   }        
+  if (message.indexOf("c:restart") == 0) {
+   ESP.restart();
+  }    
 }
 
 void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){

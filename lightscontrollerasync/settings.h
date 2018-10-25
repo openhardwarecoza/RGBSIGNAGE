@@ -30,8 +30,8 @@ bool loadConfig() {
   json.prettyPrintTo(Serial);
   Serial.printf("\n");
 
-  //strcpy(ssid, json["ssid"]);
-  //strcpy(passphrase, json["psk"]);
+  strcpy(ssid, json["ssid"]);
+  strcpy(password, json["psk"]);
   sequence = json["sequence"];
   redval = json["red"];
   greenval = json["green"];
