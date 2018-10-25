@@ -10,6 +10,7 @@ void runLightSensor() {
    if(currentCount < MaxCount) {
     currentCount++;
     sum += analogRead(A0);
+    delay(10);
   } else {
     avg = sum / MaxCount;
     currentCount = 0;

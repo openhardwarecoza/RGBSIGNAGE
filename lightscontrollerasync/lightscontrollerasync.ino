@@ -1,3 +1,12 @@
+/*
+Firmware by Peter van der Walt for KarooHeart
+
+
+TODO: Lightsensor 
+
+
+*/
+
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <FS.h>
@@ -125,7 +134,7 @@ void setup(){
 
 void loop(){
 
-//  runLightSensor();
+  runLightSensor();
 
   bool btn2 = digitalRead(pin_btn2); 
   if (!btn2) {
