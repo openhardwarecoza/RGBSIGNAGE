@@ -1,3 +1,4 @@
+
 /*
 Firmware by Peter van der Walt for KarooHeart
 
@@ -69,7 +70,7 @@ void setup(){
   #ifdef DEBUG
     Serial.println("[3/9] Starting Wifi AP...");
   #endif
-  WiFi.softAP(hostName);
+  WiFi.softAP(hostName, "Karoo100");
 
   #ifdef DEBUG
     Serial.println("[4/9] Starting mDNS...");

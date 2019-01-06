@@ -1,5 +1,5 @@
 // Analog Light sensor
-int lightthreshold = 500;
+int lightthreshold = 400;
 static const int MaxCount = 100;
 int currentCount = 0;
 long sum = 0;
